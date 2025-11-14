@@ -1,0 +1,18 @@
+[versions]
+kotlinpoet = "2.2.0"
+jackson-yaml = "3.0.2"
+
+
+[libraries]
+kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
+jackson-yaml = { module = "tools.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson-yaml" }
+jackson-properties = { module = "tools.jackson.dataformat:jackson-dataformat-properties", version.ref = "jackson-yaml" }
+
+
+[plugins]
+java-gradle-plugin = { id = "java-gradle-plugin" }
+
+
+[bundles]
+
+jackson = ["jackson-yaml", "jackson-properties"]
