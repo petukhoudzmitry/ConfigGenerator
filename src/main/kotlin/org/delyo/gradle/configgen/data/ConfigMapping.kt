@@ -1,13 +1,14 @@
 package org.delyo.gradle.configgen.data
 
-import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.model.ObjectFactory
-import javax.inject.Inject
+import org.delyo.gradle.configgen.extension.Language
+import org.delyo.gradle.configgen.service.contract.Extractor
+import java.io.File
 
 
-open class ConfigMapping @Inject constructor(objects: ObjectFactory) {
-    var inputFiles: ConfigurableFileCollection = objects.fileCollection()
+open class ConfigMapping {
     var className: String? = null
     var packageName: String? = null
-    var language: String? = null
+    val inputFiles: MutableList<File> = mutableListOf()
+    var language: Language = Language.KOTLIN
+    var extractors: List<Extractor> = emptyList()
 }

@@ -7,6 +7,14 @@ import java.io.File
 import java.nio.file.Files
 import java.util.*
 
+/*
+TODO: fix bug - produces incorrect result for example config:
+timeout=1000
+site.port=8080
+site.host=localhost
+*/
+
+@Suppress("UNCHECKED_CAST")
 class PropertiesExtractor : Extractor {
     override val extensions = listOf("properties")
     private val mapper = JavaPropsMapper()

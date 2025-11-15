@@ -5,6 +5,7 @@ import tools.jackson.dataformat.yaml.YAMLMapper
 import java.io.File
 import kotlin.collections.iterator
 
+@Suppress("UNCHECKED_CAST")
 class YamlExtractor : Extractor {
     override val extensions = listOf("yaml", "yml")
     private val mapper = YAMLMapper()

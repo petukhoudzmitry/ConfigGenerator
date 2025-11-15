@@ -16,10 +16,12 @@ class ConfigGeneratorPlugin : Plugin<Project> {
         )
 
         val taskProvider = target.tasks.register("generateConfig", ConfigGeneratorTask::class.java) { task ->
-            task.configMappings.set(extension.configMappings)
             task.defaultClassName.set(extension.defaultClassName)
-            task.outputPackage.set(extension.outputPackage)
+            task.defaultPackageName.set(extension.defaultPackageName)
+            task.inputFiles.from(extension.inputFiles)
             task.language.set(extension.language)
+            task.configMappings.set(extension.configMappings)
+            task.extractors.set(extension.extractors)
             task.outputDirectory.set(target.layout.buildDirectory.dir("generated/sources/configgen"))
         }
 
