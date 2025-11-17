@@ -6,7 +6,9 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.SourceSetContainer
 import java.io.File
+import java.nio.file.Path
 
+@Suppress("unused")
 class ConfigGeneratorPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         val extension = target.extensions.create(
@@ -18,11 +20,13 @@ class ConfigGeneratorPlugin : Plugin<Project> {
         val taskProvider = target.tasks.register("generateConfig", ConfigGeneratorTask::class.java) { task ->
             task.defaultClassName.set(extension.defaultClassName)
             task.defaultPackageName.set(extension.defaultPackageName)
-            task.inputFiles.from(extension.inputFiles)
-            task.language.set(extension.language)
+            task.defaultInputFiles.from(extension.inputFiles)
+            task.defaultLanguage.set(extension.language)
             task.configMappings.set(extension.configMappings)
-            task.extractors.set(extension.extractors)
+            task.defaultExtractors.set(extension.extractors)
+            task.defaultOutputDirectory.set(target.layout.buildDirectory.dir("generated/sources/configgen"))
             task.outputDirectory.set(target.layout.buildDirectory.dir("generated/sources/configgen"))
+            task.inputFiles.from(extension.configMappings.orNull?.flatMap { it.inputFiles } ?: emptyList<Path>())
         }
 
         target.afterEvaluate { project ->

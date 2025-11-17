@@ -3,7 +3,6 @@ package org.delyo.gradle.configgen.service
 import org.delyo.gradle.configgen.service.contract.Extractor
 import tools.jackson.dataformat.yaml.YAMLMapper
 import java.io.File
-import kotlin.collections.iterator
 
 @Suppress("UNCHECKED_CAST")
 class YamlExtractor : Extractor {
@@ -25,8 +24,28 @@ class YamlExtractor : Extractor {
             if (existing is MutableMap<*, *> && value is Map<*, *>) {
                 deepMerge(existing as MutableMap<String, Any?>, value as Map<String, Any?>)
             } else {
-                target[key] = value
+                target[key] = when (value) {
+                    is Map<*, *> -> {
+                        val copy = LinkedHashMap<String, Any?>()
+                        value.forEach { (k, v) ->
+                            copy[k?.toString() ?: "null"] = when (v) {
+                                is Map<*, *> -> convertToMutableMap(v)
+                                else -> v
+                            }
+                        }
+                        copy
+                    }
+                    else -> value
+                }
             }
         }
+    }
+
+    private fun convertToMutableMap(m: Map<*, *>): MutableMap<String, Any?> {
+        val result = LinkedHashMap<String, Any?>()
+        for ((k, v) in m) {
+            result[k?.toString() ?: "null"] = if (v is Map<*, *>) convertToMutableMap(v) else v
+        }
+        return result
     }
 }

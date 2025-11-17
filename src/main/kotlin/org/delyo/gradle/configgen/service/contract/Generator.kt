@@ -1,7 +1,8 @@
 package org.delyo.gradle.configgen.service.contract
 
+import org.delyo.gradle.configgen.data.ConfigMapping
 import java.io.File
 
 interface Generator {
-    fun generate(srcFile: File, outputDir: File, packageName: String, className: String, extracted: Map<String, Any?>)
+    fun generate(outputDir: File, packageClass: Pair<String, String>, configMappings: Set<ConfigMapping>)
 }
