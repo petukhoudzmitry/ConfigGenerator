@@ -3,6 +3,7 @@ package org.delyo.gradle.configgen.task
 import org.delyo.gradle.configgen.data.ConfigMapping
 import org.delyo.gradle.configgen.extension.Language
 import org.delyo.gradle.configgen.service.CodeGenerator
+import org.delyo.gradle.configgen.service.PluginInputNormalizer
 import org.delyo.gradle.configgen.service.contract.Extractor
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
@@ -52,54 +53,14 @@ open class ConfigGeneratorTask @Inject constructor(@Internal val objects: Object
 
     @TaskAction
     fun generate() {
-        val merged = mergeInputsPerPackageAndClass()
+        val merged = PluginInputNormalizer.normalize(
+            configMappings,
+            defaultClassName,
+            defaultPackageName,
+            defaultExtractors,
+            defaultInputFiles,
+            defaultLanguage
+        )
         CodeGenerator.generateCode(outputDirectory.get().asFile, merged)
-    }
-
-    private fun mergeInputsPerPackageAndClass(): Map<Pair<String, String>, Set<ConfigMapping>> {
-        val result = mutableMapOf<Pair<String, String>, Set<ConfigMapping>>()
-        val packageClasses = mutableSetOf<Pair<String, String>>()
-
-        val configMappings =
-            configMappings.orNull?.filter { it.inputFiles.isNotEmpty() }?.toMutableList() ?: mutableListOf()
-        configMappings.add(generateConfigMappingFromDefaults())
-
-        val processedConfigMappings = configMappings.map {
-            if (it.className.isEmpty()) {
-                it.className = defaultClassName.orNull ?: ""
-            }
-            if (it.packageName.isEmpty()) {
-                it.packageName = defaultPackageName.orNull ?: ""
-            }
-            if (it.extractors.isEmpty()) {
-                it.extractors = defaultExtractors.orNull?.toMutableSet() ?: mutableSetOf()
-            }
-            it
-        }.filter { it.className.isNotEmpty() && it.packageName.isNotEmpty() && it.extractors.isNotEmpty() }
-
-        packageClasses.addAll(processedConfigMappings.map { Pair(it.packageName, it.className) })
-        packageClasses.remove(Pair("", ""))
-
-        packageClasses.forEach { packageClass ->
-            val matching = processedConfigMappings.filter {
-                it.packageName == packageClass.first && it.className == packageClass.second
-            }.ifEmpty {
-                emptySet()
-            }.toSet()
-
-            result[packageClass] = matching
-        }
-
-        return result
-    }
-
-    private fun generateConfigMappingFromDefaults(): ConfigMapping {
-        return ConfigMapping().apply {
-            className = defaultClassName.orNull ?: ""
-            packageName = defaultPackageName.orNull ?: ""
-            inputFiles.addAll(defaultInputFiles.files.toList())
-            language = defaultLanguage.orNull ?: Language.KOTLIN
-            extractors = defaultExtractors.orNull?.toMutableSet() ?: mutableSetOf()
-        }
     }
 }

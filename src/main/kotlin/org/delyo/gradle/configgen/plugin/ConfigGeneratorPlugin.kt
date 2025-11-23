@@ -30,6 +30,16 @@ class ConfigGeneratorPlugin : Plugin<Project> {
         }
 
         target.afterEvaluate { project ->
+            val jacksonVersion = "3.0.2"
+            target.dependencies.add(
+                "implementation",
+                "tools.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion"
+            )
+            target.dependencies.add(
+                "implementation",
+                "tools.jackson.dataformat:jackson-dataformat-properties:$jacksonVersion"
+            )
+
             val sourceSets = project.extensions.getByType(SourceSetContainer::class.java)
             val mainSourceSet = sourceSets.getByName("main")
             val generatedDir = File(target.layout.buildDirectory.orNull?.asFile?.path, "generated/sources/configgen")
