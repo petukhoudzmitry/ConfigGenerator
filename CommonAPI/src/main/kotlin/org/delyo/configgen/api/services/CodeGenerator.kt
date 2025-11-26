@@ -1,7 +1,7 @@
-package org.delyo.gradle.configgen.service
+package org.delyo.configgen.api.services
 
-import org.delyo.gradle.configgen.data.ConfigMapping
-import org.delyo.gradle.configgen.extension.Language
+import org.delyo.configgen.api.data.ConfigMapping
+import org.delyo.configgen.api.enums.Language
 import java.io.File
 
 object CodeGenerator {

@@ -1,4 +1,4 @@
-package org.delyo.gradle.configgen.service.contract
+package org.delyo.configgen.api.services.contract
 
 import java.io.File
 

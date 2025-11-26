@@ -1,6 +1,6 @@
-package org.delyo.gradle.configgen.service
+package org.delyo.configgen.api.services
 
-import org.delyo.gradle.configgen.util.deepMerge
+import org.delyo.configgen.api.util.deepMerge
 import tools.jackson.dataformat.javaprop.JavaPropsMapper
 import tools.jackson.dataformat.javaprop.JavaPropsSchema
 import java.io.File

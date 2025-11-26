@@ -23,6 +23,7 @@ val generateLocalProperties: PluginDeclaration by gradlePlugin.plugins.creating 
 dependencies {
     testImplementation(kotlin("test"))
 
+    implementation(project(":CommonAPI"))
     implementation(libs.kotlinpoet)
     implementation(libs.bundles.jackson)
 }

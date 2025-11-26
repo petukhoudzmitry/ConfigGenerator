@@ -1,11 +1,11 @@
 package org.delyo.gradle.configgen.task
 
-import org.delyo.gradle.configgen.data.ConfigMapping
-import org.delyo.gradle.configgen.extension.ExtractionPolicy
-import org.delyo.gradle.configgen.extension.Language
-import org.delyo.gradle.configgen.service.CodeGenerator
-import org.delyo.gradle.configgen.service.PluginInputNormalizer
-import org.delyo.gradle.configgen.service.contract.Extractor
+import org.delyo.configgen.api.data.ConfigMapping
+import org.delyo.configgen.api.enums.ExtractionPolicy
+import org.delyo.configgen.api.enums.Language
+import org.delyo.configgen.api.services.CodeGenerator
+import org.delyo.configgen.api.services.PluginInputNormalizer
+import org.delyo.configgen.api.services.contract.Extractor
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.model.ObjectFactory

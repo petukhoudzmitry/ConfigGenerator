@@ -1,3 +1,3 @@
-package org.delyo.gradle.configgen.extension
+package org.delyo.configgen.api.enums
 
 enum class ExtractionPolicy { MERGE, RETAIN }

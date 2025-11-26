@@ -1,6 +1,6 @@
-package org.delyo.gradle.configgen.service
+package org.delyo.configgen.api.services
 
-import org.delyo.gradle.configgen.util.deepMerge
+import org.delyo.configgen.api.util.deepMerge
 import tools.jackson.dataformat.yaml.YAMLMapper
 import java.io.File
 
@@ -33,6 +33,4 @@ class YamlExtractor : AbstractExtractor() {
         }
         return result
     }
-
-
 }

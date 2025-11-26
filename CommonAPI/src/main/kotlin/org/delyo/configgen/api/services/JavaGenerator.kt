@@ -1,6 +1,6 @@
-package org.delyo.gradle.configgen.service
+package org.delyo.configgen.api.services
 
-import org.delyo.gradle.configgen.data.ConfigMapping
+import org.delyo.configgen.api.data.ConfigMapping
 import java.io.File
 
 object JavaGenerator : AbstractGenerator() {

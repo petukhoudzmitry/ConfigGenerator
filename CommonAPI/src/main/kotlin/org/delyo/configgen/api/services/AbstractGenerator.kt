@@ -1,10 +1,10 @@
-package org.delyo.gradle.configgen.service
+package org.delyo.configgen.api.services
 
-import org.delyo.gradle.configgen.data.ConfigMapping
-import org.delyo.gradle.configgen.extension.ExtractionPolicy
-import org.delyo.gradle.configgen.service.contract.Extractor
-import org.delyo.gradle.configgen.service.contract.Generator
-import org.delyo.gradle.configgen.util.deepMerge
+import org.delyo.configgen.api.data.ConfigMapping
+import org.delyo.configgen.api.enums.ExtractionPolicy
+import org.delyo.configgen.api.services.contract.Extractor
+import org.delyo.configgen.api.services.contract.Generator
+import org.delyo.configgen.api.util.deepMerge
 import java.io.File
 
 abstract class AbstractGenerator : Generator {

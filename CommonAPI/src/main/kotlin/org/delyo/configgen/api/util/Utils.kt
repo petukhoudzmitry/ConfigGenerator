@@ -1,4 +1,4 @@
-package org.delyo.gradle.configgen.util
+package org.delyo.configgen.api.util
 
 @Suppress("UNCHECKED_CAST")
 fun deepMerge(target: MutableMap<String, Any?>, src: Map<String, Any?>) {

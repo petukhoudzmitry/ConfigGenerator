@@ -1,8 +1,8 @@
-package org.delyo.gradle.configgen.service
+package org.delyo.configgen.api.services
 
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import org.delyo.gradle.configgen.util.uniqueSanitized
+import org.delyo.configgen.api.util.uniqueSanitized
 import java.io.File
 import java.util.*
 
@@ -25,7 +25,15 @@ object KotlinGenerator : AbstractGenerator() {
 
         typeBuilder.addInitializerBlock(
             CodeBlock.builder().add("val files = listOf(")
-                .apply { inputFiles.forEachIndexed { i, f -> if (i > 0) add(", "); add("%T(%S)", File::class, f.path) } }
+                .apply {
+                    inputFiles.forEachIndexed { i, f ->
+                        if (i > 0) add(", "); add(
+                        "%T(%S)",
+                        File::class,
+                        f.path
+                    )
+                    }
+                }
                 .add(")\n")
                 .add(
                     "properties = %T.loadAsProperties(files)\n",

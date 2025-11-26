@@ -40,6 +40,8 @@ class ConfigGeneratorPlugin : Plugin<Project> {
                 "implementation",
                 "tools.jackson.dataformat:jackson-dataformat-properties:$jacksonVersion"
             )
+            add("api", target.dependencies.project(mapOf("path" to ":CommonAPI")))
+            add("api", target.dependencies.project(mapOf("path" to ":RuntimeConfigLoader")))
         }
 
         target.afterEvaluate { project ->

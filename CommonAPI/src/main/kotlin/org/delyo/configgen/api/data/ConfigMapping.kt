@@ -1,8 +1,8 @@
-package org.delyo.gradle.configgen.data
+package org.delyo.configgen.api.data
 
-import org.delyo.gradle.configgen.extension.ExtractionPolicy
-import org.delyo.gradle.configgen.extension.Language
-import org.delyo.gradle.configgen.service.contract.Extractor
+import org.delyo.configgen.api.enums.ExtractionPolicy
+import org.delyo.configgen.api.enums.Language
+import org.delyo.configgen.api.services.contract.Extractor
 import java.io.File
 
 

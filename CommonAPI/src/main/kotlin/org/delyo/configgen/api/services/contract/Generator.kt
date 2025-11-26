@@ -1,6 +1,6 @@
-package org.delyo.gradle.configgen.service.contract
+package org.delyo.configgen.api.services.contract
 
-import org.delyo.gradle.configgen.data.ConfigMapping
+import org.delyo.configgen.api.data.ConfigMapping
 import java.io.File
 
 interface Generator {

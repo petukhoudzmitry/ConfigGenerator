@@ -1,9 +1,11 @@
 package org.delyo.gradle.configgen.extension
 
-import org.delyo.gradle.configgen.data.ConfigMapping
-import org.delyo.gradle.configgen.service.PropertiesExtractor
-import org.delyo.gradle.configgen.service.YamlExtractor
-import org.delyo.gradle.configgen.service.contract.Extractor
+import org.delyo.configgen.api.data.ConfigMapping
+import org.delyo.configgen.api.enums.ExtractionPolicy
+import org.delyo.configgen.api.enums.Language
+import org.delyo.configgen.api.services.PropertiesExtractor
+import org.delyo.configgen.api.services.YamlExtractor
+import org.delyo.configgen.api.services.contract.Extractor
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
