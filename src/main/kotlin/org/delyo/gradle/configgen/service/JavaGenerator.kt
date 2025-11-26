@@ -11,4 +11,14 @@ object JavaGenerator : AbstractGenerator() {
     ) {
         TODO("Not yet implemented")
     }
+
+    override fun generateCode(
+        outputDir: File,
+        packageRaw: String,
+        classRaw: String,
+        merged: Map<String, Any?>,
+        inputFiles: Set<File>
+    ) {
+        TODO("Not yet implemented")
+    }
 }

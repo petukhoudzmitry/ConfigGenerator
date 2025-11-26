@@ -1,5 +1,6 @@
 package org.delyo.gradle.configgen.data
 
+import org.delyo.gradle.configgen.extension.ExtractionPolicy
 import org.delyo.gradle.configgen.extension.Language
 import org.delyo.gradle.configgen.service.contract.Extractor
 import java.io.File
@@ -10,6 +11,7 @@ open class ConfigMapping {
     var packageName: String = ""
     val inputFiles: MutableSet<File> = mutableSetOf()
     var language: Language = Language.KOTLIN
+    var extractionPolicy: ExtractionPolicy = ExtractionPolicy.RETAIN
     var extractors: MutableSet<Extractor> = mutableSetOf()
 
     override fun equals(other: Any?): Boolean {
@@ -20,12 +22,13 @@ open class ConfigMapping {
         if (packageName != other.packageName) return false
         if (inputFiles != other.inputFiles) return false
         if (language != other.language) return false
+        if (extractionPolicy != other.extractionPolicy) return false
         if (extractors != other.extractors) return false
         return true
     }
 
     override fun toString(): String {
-        return "ConfigMapping(className=$className, packageName=$packageName, inputFiles=$inputFiles, language=$language, extractors=$extractors)"
+        return "ConfigMapping(className=$className, packageName=$packageName, inputFiles=$inputFiles, language=$language, extractionPolicy=$extractionPolicy, extractors=$extractors)"
     }
 
     override fun hashCode(): Int {
@@ -33,6 +36,7 @@ open class ConfigMapping {
         result = 31 * result + packageName.hashCode()
         result = 31 * result + inputFiles.hashCode()
         result = 31 * result + language.hashCode()
+        result = 31 * result + extractionPolicy.hashCode()
         result = 31 * result + extractors.hashCode()
         return result
     }

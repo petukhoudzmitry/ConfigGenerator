@@ -1,6 +1,7 @@
 package org.delyo.gradle.configgen.task
 
 import org.delyo.gradle.configgen.data.ConfigMapping
+import org.delyo.gradle.configgen.extension.ExtractionPolicy
 import org.delyo.gradle.configgen.extension.Language
 import org.delyo.gradle.configgen.service.CodeGenerator
 import org.delyo.gradle.configgen.service.PluginInputNormalizer
@@ -33,6 +34,9 @@ open class ConfigGeneratorTask @Inject constructor(@Internal val objects: Object
 
     @get:Input
     val defaultLanguage: Property<Language> = objects.property(Language::class.java)
+
+    @get:Input
+    val defaultExtractionPolicy: Property<ExtractionPolicy> = objects.property(ExtractionPolicy::class.java)
 
     @Internal
     val configMappings: ListProperty<ConfigMapping> = objects.listProperty(ConfigMapping::class.java)

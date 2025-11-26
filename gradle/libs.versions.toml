@@ -14,5 +14,4 @@ java-gradle-plugin = { id = "java-gradle-plugin" }
 
 
 [bundles]
-
 jackson = ["jackson-yaml", "jackson-properties"]

@@ -2,79 +2,22 @@ package org.delyo.gradle.configgen.service
 
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import org.delyo.gradle.configgen.data.ConfigMapping
-import org.delyo.gradle.configgen.service.contract.Extractor
+import org.delyo.gradle.configgen.util.uniqueSanitized
 import java.io.File
 import java.util.*
 
+
 object KotlinGenerator : AbstractGenerator() {
-    override fun generate(
+
+    override fun generateCode(
         outputDir: File,
-        packageClass: Pair<String, String>,
-        configMappings: Set<ConfigMapping>
-    ) {
-        val (packageRaw, classRaw) = packageClass
-
-        val merged: MutableMap<String, Any?> = LinkedHashMap()
-
-        val extractors: MutableSet<Extractor> = mutableSetOf()
-        extractors.addAll(configMappings.flatMap { it.extractors })
-
-        val files: MutableSet<File> = mutableSetOf()
-        files.addAll(configMappings.flatMap { it.inputFiles })
-        val extractorsToFilesMap: Map<Extractor, List<File>> = extractors.associateWith { extractor ->
-            files.filter { file -> extractor.extensions.contains(file.extension) }
-        }
-
-        for ((extractor, files) in extractorsToFilesMap) {
-            val extracted = extractor.extract(files)
-            deepMerge(merged, extracted)
-
-        }
-
-        generateCode(outputDir, packageRaw, classRaw, merged, files)
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    private fun deepMerge(target: MutableMap<String, Any?>, src: Map<String, Any?>) {
-        for ((k, v) in src) {
-            val existing = target[k]
-            if (existing is MutableMap<*, *> && v is Map<*, *>) {
-                @Suppress("UNCHECKED_CAST")
-                deepMerge(existing as MutableMap<String, Any?>, v as Map<String, Any?>)
-            } else {
-                target[k] = when (v) {
-                    is Map<*, *> -> {
-                        val copy = LinkedHashMap<String, Any?>()
-                        for ((ck, cv) in v) {
-                            copy[ck?.toString() ?: "null"] = if (cv is Map<*, *>) convertToMutableMap(cv) else cv
-                        }
-                        copy
-                    }
-
-                    else -> v
-                }
-            }
-        }
-    }
-
-    private fun convertToMutableMap(m: Map<*, *>): MutableMap<String, Any?> {
-        val res = LinkedHashMap<String, Any?>()
-        for ((k, v) in m) {
-            res[k?.toString() ?: "null"] = if (v is Map<*, *>) convertToMutableMap(v) else v
-        }
-        return res
-    }
-
-    private fun generateCode(
-        outputDir: File,
-        packageName: String,
-        className: String,
+        packageRaw: String,
+        classRaw: String,
         merged: Map<String, Any?>,
-        files: Set<File>
+        inputFiles: Set<File>
     ) {
-        val fileBuilder = FileSpec.builder(packageName, className)
-        val typeBuilder = TypeSpec.objectBuilder(className)
+        val fileBuilder = FileSpec.builder(packageRaw, classRaw)
+        val typeBuilder = TypeSpec.objectBuilder(classRaw)
 
         typeBuilder.addProperty(
             PropertySpec.builder("properties", Properties::class).addModifiers(KModifier.PRIVATE).build()
@@ -82,13 +25,13 @@ object KotlinGenerator : AbstractGenerator() {
 
         typeBuilder.addInitializerBlock(
             CodeBlock.builder().add("val files = listOf(")
-            .apply { files.forEachIndexed { i, f -> if (i > 0) add(", "); add("%T(%S)", File::class, f.path) } }
-            .add(")\n")
-            .add(
-                "properties = %T.loadAsProperties(files)\n",
-                ClassName("org.delyo.buildconfig.runtime", "ConfigPropertiesLoader")
-            )
-            .build())
+                .apply { inputFiles.forEachIndexed { i, f -> if (i > 0) add(", "); add("%T(%S)", File::class, f.path) } }
+                .add(")\n")
+                .add(
+                    "properties = %T.loadAsProperties(files)\n",
+                    ClassName("org.delyo.buildconfig.runtime", "ConfigPropertiesLoader")
+                )
+                .build())
 
         generateForMap(merged, typeBuilder)
 
@@ -141,21 +84,5 @@ object KotlinGenerator : AbstractGenerator() {
                 }
             }
         }
-    }
-
-    private fun uniqueSanitized(raw: String, used: MutableSet<String>): String {
-        var id = raw.replace(Regex("[^A-Za-z0-9_]"), "_")
-        id = id.replace(Regex("_+"), "_").trim('_')
-        if (id.isEmpty()) id = "_"
-        if (id.first().isDigit()) id = "_$id"
-        val keywords = setOf("object", "class", "package", "val", "var", "fun", "if", "else", "when")
-        if (keywords.contains(id)) id = "${id}_"
-        var candidate = id
-        var idx = 1
-        while (used.contains(candidate)) {
-            candidate = "${id}_$idx"; idx++
-        }
-        used.add(candidate)
-        return candidate
     }
 }

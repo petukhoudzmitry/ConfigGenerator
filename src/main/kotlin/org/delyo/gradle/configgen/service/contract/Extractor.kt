@@ -4,5 +4,6 @@ import java.io.File
 
 interface Extractor {
     val extensions: List<String>
-    fun extract(files: List<File>): Map<String, Any?>
+    fun merge(files: List<File>) : Map<String, Any?>
+    fun retain(files: List<File>) : Map<String, Any?>
 }

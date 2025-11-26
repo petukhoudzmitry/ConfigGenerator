@@ -22,6 +22,7 @@ class ConfigGeneratorPlugin : Plugin<Project> {
             task.defaultPackageName.set(extension.defaultPackageName)
             task.defaultInputFiles.from(extension.inputFiles)
             task.defaultLanguage.set(extension.language)
+            task.defaultExtractionPolicy.set(extension.defaultExtractionPolicy)
             task.configMappings.set(extension.configMappings)
             task.defaultExtractors.set(extension.extractors)
             task.defaultOutputDirectory.set(target.layout.buildDirectory.dir("generated/sources/configgen"))
@@ -29,16 +30,19 @@ class ConfigGeneratorPlugin : Plugin<Project> {
             task.inputFiles.from(extension.configMappings.orNull?.flatMap { it.inputFiles } ?: emptyList<Path>())
         }
 
-        target.afterEvaluate { project ->
+        with(target.dependencies) {
             val jacksonVersion = "3.0.2"
-            target.dependencies.add(
+            add(
                 "implementation",
                 "tools.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion"
             )
-            target.dependencies.add(
+            add(
                 "implementation",
                 "tools.jackson.dataformat:jackson-dataformat-properties:$jacksonVersion"
             )
+        }
+
+        target.afterEvaluate { project ->
 
             val sourceSets = project.extensions.getByType(SourceSetContainer::class.java)
             val mainSourceSet = sourceSets.getByName("main")
