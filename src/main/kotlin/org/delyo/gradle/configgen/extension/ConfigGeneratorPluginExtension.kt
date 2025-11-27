@@ -27,7 +27,7 @@ open class ConfigGeneratorPluginExtension @Inject constructor(val objects: Objec
     val configMappings: ListProperty<ConfigMapping> = objects.listProperty(ConfigMapping::class.java)
     val extractors: ListProperty<Extractor> = objects.listProperty(Extractor::class.java).convention(
         listOf(
-            PropertiesExtractor(), YamlExtractor()
+            PropertiesExtractor, YamlExtractor
         )
     )
 

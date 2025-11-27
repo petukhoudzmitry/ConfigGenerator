@@ -1,6 +1,8 @@
 package org.delyo.configgen.api.services
 
 import org.delyo.configgen.api.data.ConfigMapping
+import org.delyo.configgen.api.enums.ExtractionPolicy
+import org.delyo.configgen.api.services.contract.Extractor
 import java.io.File
 
 object JavaGenerator : AbstractGenerator() {
@@ -17,7 +19,7 @@ object JavaGenerator : AbstractGenerator() {
         packageRaw: String,
         classRaw: String,
         merged: Map<String, Any?>,
-        inputFiles: Set<File>
+        fileToExtractionMap: Map<File, Pair<Extractor, ExtractionPolicy>>
     ) {
         TODO("Not yet implemented")
     }

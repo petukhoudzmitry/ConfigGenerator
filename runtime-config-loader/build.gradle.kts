@@ -1,10 +1,14 @@
 plugins {
     kotlin("jvm")
-    alias(libs.plugins.java.gradle.plugin)
+    `java-library`
 }
 
-group = "org.delyo.configgen.api"
+group = "org.delyo"
 version = "1.0.0"
+
+java {
+    withSourcesJar()
+}
 
 repositories {
     mavenCentral()
@@ -12,9 +16,7 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
-
-    implementation(libs.bundles.jackson)
-    implementation(libs.kotlinpoet)
+    implementation(project(":common-api"))
 }
 
 tasks.test {

@@ -17,10 +17,17 @@ abstract class AbstractGenerator : Generator {
 
         val merged: MutableMap<String, Any?> = LinkedHashMap()
 
-        val files: MutableSet<File> = mutableSetOf()
-        files.addAll(configMappings.flatMap { it.inputFiles })
+        val filesToExtractionMap: MutableMap<File, Pair<Extractor, ExtractionPolicy>> = mutableMapOf()
+        configMappings.forEach { configMapping ->
+            configMapping.inputFiles.forEach { file ->
+                val extractor = configMapping.extractors.firstOrNull { it.extensions.contains(file.extension) }
+                requireNotNull(extractor) { "No extractor found for file ${file.name}" }
 
-        val extractors = configMappings.flatMap { it.extractors }.toSet()
+                filesToExtractionMap[file] = Pair(extractor, configMapping.extractionPolicy)
+            }
+        }
+
+        val extractors = configMappings.flatMap { it.extractors }
 
         configMappings.groupBy { it.extractionPolicy }.forEach { (policy, mappings) ->
             val files = mappings.flatMap { it.inputFiles }
@@ -38,6 +45,6 @@ abstract class AbstractGenerator : Generator {
             }
         }
 
-        generateCode(outputDir, packageRaw, classRaw, merged, files)
+        generateCode(outputDir, packageRaw, classRaw, merged, filesToExtractionMap)
     }
 }

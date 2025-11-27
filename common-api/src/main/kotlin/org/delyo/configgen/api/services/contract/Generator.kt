@@ -1,6 +1,7 @@
 package org.delyo.configgen.api.services.contract
 
 import org.delyo.configgen.api.data.ConfigMapping
+import org.delyo.configgen.api.enums.ExtractionPolicy
 import java.io.File
 
 interface Generator {
@@ -10,6 +11,6 @@ interface Generator {
         packageRaw: String,
         classRaw: String,
         merged: Map<String, Any?>,
-        inputFiles: Set<File>
+        fileToExtractionMap: Map<File, Pair<Extractor, ExtractionPolicy>>
     )
 }

@@ -5,7 +5,7 @@ import tools.jackson.dataformat.yaml.YAMLMapper
 import java.io.File
 
 @Suppress("UNCHECKED_CAST")
-class YamlExtractor : AbstractExtractor() {
+object YamlExtractor : AbstractExtractor() {
     override val extensions = listOf("yaml", "yml")
     private val mapper = YAMLMapper()
 

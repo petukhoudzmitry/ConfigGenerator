@@ -2,11 +2,13 @@ package org.delyo.configgen.api.services
 
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import org.delyo.configgen.api.enums.ExtractionPolicy
+import org.delyo.configgen.api.services.contract.Extractor
 import org.delyo.configgen.api.util.uniqueSanitized
 import java.io.File
 import java.util.*
 
-
+@Suppress("UNCHECKED_CAST")
 object KotlinGenerator : AbstractGenerator() {
 
     override fun generateCode(
@@ -14,7 +16,7 @@ object KotlinGenerator : AbstractGenerator() {
         packageRaw: String,
         classRaw: String,
         merged: Map<String, Any?>,
-        inputFiles: Set<File>
+        fileToExtractionMap: Map<File, Pair<Extractor, ExtractionPolicy>>
     ) {
         val fileBuilder = FileSpec.builder(packageRaw, classRaw)
         val typeBuilder = TypeSpec.objectBuilder(classRaw)
@@ -24,20 +26,28 @@ object KotlinGenerator : AbstractGenerator() {
         )
 
         typeBuilder.addInitializerBlock(
-            CodeBlock.builder().add("val files = listOf(")
+            CodeBlock.builder().add("val filesToExtractionMap = mutableMapOf(")
                 .apply {
-                    inputFiles.forEachIndexed { i, f ->
-                        if (i > 0) add(", "); add(
-                        "%T(%S)",
-                        File::class,
-                        f.path
-                    )
+                    var i = 0
+                    fileToExtractionMap.forEach { file, (extractor, extractionPolicy) ->
+                        if (i++ > 0) {
+                            add(", ")
+                        }
+                        add(
+                            "%T(%S) to %T(%T, %T.%L)",
+                            File::class,
+                            file.path,
+                            Pair::class,
+                            extractor::class,
+                            ExtractionPolicy::class,
+                            extractionPolicy.name
+                        )
                     }
                 }
                 .add(")\n")
                 .add(
-                    "properties = %T.loadAsProperties(files)\n",
-                    ClassName("org.delyo.buildconfig.runtime", "ConfigPropertiesLoader")
+                    "properties = %T.loadAsProperties(filesToExtractionMap)\n",
+                    ClassName("org.delyo.loader", "RuntimeConfigLoader")
                 )
                 .build())
 
@@ -48,7 +58,7 @@ object KotlinGenerator : AbstractGenerator() {
         fileBuilder.build().writeTo(outputDir)
     }
 
-    @Suppress("UNCHECKED_CAST")
+
     private fun generateForMap(
         map: Map<String, Any?>,
         parentBuilder: TypeSpec.Builder,

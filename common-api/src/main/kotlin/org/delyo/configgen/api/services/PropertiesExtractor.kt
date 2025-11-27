@@ -8,7 +8,7 @@ import java.nio.file.Files
 import java.util.*
 
 @Suppress("UNCHECKED_CAST")
-class PropertiesExtractor : AbstractExtractor() {
+object PropertiesExtractor : AbstractExtractor() {
     override val extensions = listOf("properties")
     private val mapper = JavaPropsMapper()
 

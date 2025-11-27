@@ -2,5 +2,5 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
 }
 rootProject.name = "ConfigGenerator"
-include("RuntimeConfigLoader")
-include("CommonAPI")
+include("runtime-config-loader")
+include("common-api")

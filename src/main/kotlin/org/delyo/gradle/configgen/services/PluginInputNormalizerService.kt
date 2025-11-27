@@ -1,13 +1,14 @@
-package org.delyo.configgen.api.services
+package org.delyo.gradle.configgen.services
 
 import org.delyo.configgen.api.data.ConfigMapping
 import org.delyo.configgen.api.enums.Language
 import org.delyo.configgen.api.services.contract.Extractor
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 
-object PluginInputNormalizer {
+object PluginInputNormalizerService {
     fun normalize(
         configMappings: ListProperty<ConfigMapping>,
         defaultClassName: Property<String>,
@@ -15,6 +16,7 @@ object PluginInputNormalizer {
         defaultExtractors: ListProperty<Extractor>,
         defaultInputFiles: ConfigurableFileCollection,
         defaultLanguage: Property<Language>,
+        objects: ObjectFactory
     ): Map<Pair<String, String>, Set<ConfigMapping>> {
         val result = mutableMapOf<Pair<String, String>, Set<ConfigMapping>>()
         val packageClasses = mutableSetOf<Pair<String, String>>()
@@ -27,7 +29,8 @@ object PluginInputNormalizer {
                 defaultPackageName,
                 defaultInputFiles,
                 defaultLanguage,
-                defaultExtractors
+                defaultExtractors,
+                objects
             )
         )
 
@@ -42,9 +45,20 @@ object PluginInputNormalizer {
                 it.extractors = defaultExtractors.orNull?.toMutableSet() ?: mutableSetOf()
             }
             it
-        }.filter { it.className.isNotEmpty() && it.packageName.isNotEmpty() && it.extractors.isNotEmpty() }
+        }.filter {
+            it.className.isNotEmpty() &&
+                    it.packageName.isNotEmpty() &&
+                    it.extractors.isNotEmpty() &&
+                    it.inputFiles.isNotEmpty()
+        }
 
-        packageClasses.addAll(processedConfigMappings.map { Pair(it.packageName, it.className) })
+
+        packageClasses.addAll(processedConfigMappings.map {
+            Pair(
+                it.packageName,
+                it.className
+            )
+        })
         packageClasses.remove(Pair("", ""))
 
         packageClasses.forEach { packageClass ->
@@ -65,9 +79,10 @@ object PluginInputNormalizer {
         defaultPackageName: Property<String>,
         defaultInputFiles: ConfigurableFileCollection,
         defaultLanguage: Property<Language>,
-        defaultExtractors: ListProperty<Extractor>
+        defaultExtractors: ListProperty<Extractor>,
+        objects: ObjectFactory
     ): ConfigMapping {
-        return ConfigMapping().apply {
+        return objects.newInstance(ConfigMapping::class.java).apply {
             className = defaultClassName.orNull ?: ""
             packageName = defaultPackageName.orNull ?: ""
             inputFiles.addAll(defaultInputFiles.files.toList())
@@ -75,4 +90,5 @@ object PluginInputNormalizer {
             extractors = defaultExtractors.orNull?.toMutableSet() ?: mutableSetOf()
         }
     }
+
 }

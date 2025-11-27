@@ -8,7 +8,7 @@ import org.gradle.api.tasks.SourceSetContainer
 import java.io.File
 import java.nio.file.Path
 
-@Suppress("unused")
+@Suppress("unused", "UNCHECKED_CAST")
 class ConfigGeneratorPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         val extension = target.extensions.create(
@@ -17,7 +17,9 @@ class ConfigGeneratorPlugin : Plugin<Project> {
             target.objects
         )
 
-        val taskProvider = target.tasks.register("generateConfig", ConfigGeneratorTask::class.java) { task ->
+        val taskName = "generateConfig"
+
+        val taskProvider = target.tasks.register(taskName, ConfigGeneratorTask::class.java) { task ->
             task.defaultClassName.set(extension.defaultClassName)
             task.defaultPackageName.set(extension.defaultPackageName)
             task.defaultInputFiles.from(extension.inputFiles)
@@ -30,18 +32,25 @@ class ConfigGeneratorPlugin : Plugin<Project> {
             task.inputFiles.from(extension.configMappings.orNull?.flatMap { it.inputFiles } ?: emptyList<Path>())
         }
 
-        with(target.dependencies) {
-            val jacksonVersion = "3.0.2"
-            add(
-                "implementation",
-                "tools.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion"
-            )
-            add(
-                "implementation",
-                "tools.jackson.dataformat:jackson-dataformat-properties:$jacksonVersion"
-            )
-            add("api", target.dependencies.project(mapOf("path" to ":CommonAPI")))
-            add("api", target.dependencies.project(mapOf("path" to ":RuntimeConfigLoader")))
+
+        val group = "org.delyo"
+        val version = "1.0.0"
+
+        val apiArtifacts = listOf(
+            "$group:common-api:$version",
+            "$group:runtime-config-loader:$version"
+        )
+
+        val targetConfiguration = when {
+            target.configurations.findByName("implementation") != null -> "implementation"
+            target.configurations.findByName("api") != null -> "api"
+            else -> "compile"
+        }
+
+        target.afterEvaluate {
+            apiArtifacts.forEach { coord ->
+                target.dependencies.add(targetConfiguration, coord)
+            }
         }
 
         target.afterEvaluate { project ->

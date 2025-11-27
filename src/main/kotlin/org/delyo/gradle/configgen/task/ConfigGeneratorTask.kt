@@ -4,8 +4,8 @@ import org.delyo.configgen.api.data.ConfigMapping
 import org.delyo.configgen.api.enums.ExtractionPolicy
 import org.delyo.configgen.api.enums.Language
 import org.delyo.configgen.api.services.CodeGenerator
-import org.delyo.configgen.api.services.PluginInputNormalizer
 import org.delyo.configgen.api.services.contract.Extractor
+import org.delyo.gradle.configgen.services.PluginInputNormalizerService
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.model.ObjectFactory
@@ -57,13 +57,14 @@ open class ConfigGeneratorTask @Inject constructor(@Internal val objects: Object
 
     @TaskAction
     fun generate() {
-        val merged = PluginInputNormalizer.normalize(
+        val merged = PluginInputNormalizerService.normalize(
             configMappings,
             defaultClassName,
             defaultPackageName,
             defaultExtractors,
             defaultInputFiles,
-            defaultLanguage
+            defaultLanguage,
+            objects
         )
         CodeGenerator.generateCode(outputDirectory.get().asFile, merged)
     }

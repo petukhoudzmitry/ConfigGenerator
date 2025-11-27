@@ -20,12 +20,27 @@ val generateLocalProperties: PluginDeclaration by gradlePlugin.plugins.creating 
     implementationClass = "org.delyo.gradle.configgen.plugin.ConfigGeneratorPlugin"
 }
 
+subprojects {
+    plugins.withId("java-library") {
+        apply(plugin = "maven-publish")
+        afterEvaluate {
+            publishing {
+                publications {
+                    create<MavenPublication>("mavenJava") {
+                        from(components["java"])
+                        groupId = project.group.toString()
+                        artifactId = project.name
+                        version = project.version.toString()
+                    }
+                }
+            }
+        }
+    }
+}
+
 dependencies {
     testImplementation(kotlin("test"))
-
-    implementation(project(":CommonAPI"))
-    implementation(libs.kotlinpoet)
-    implementation(libs.bundles.jackson)
+    implementation(project(":common-api"))
 }
 
 tasks.test {
