@@ -20,18 +20,21 @@ class ConfigGeneratorPlugin : Plugin<Project> {
         val taskName = "generateConfig"
 
         val taskProvider = target.tasks.register(taskName, ConfigGeneratorTask::class.java) { task ->
-            task.defaultClassName.set(extension.defaultClassName)
-            task.defaultPackageName.set(extension.defaultPackageName)
-            task.defaultInputFiles.from(extension.inputFiles)
-            task.defaultLanguage.set(extension.language)
-            task.defaultExtractionPolicy.set(extension.defaultExtractionPolicy)
-            task.configMappings.set(extension.configMappings)
-            task.defaultExtractors.set(extension.extractors)
-            task.defaultOutputDirectory.set(target.layout.buildDirectory.dir("generated/sources/configgen"))
-            task.outputDirectory.set(target.layout.buildDirectory.dir("generated/sources/configgen"))
-            task.inputFiles.from(extension.configMappings.orNull?.flatMap { it.inputFiles } ?: emptyList<Path>())
-        }
+            with (task) {
+                defaultClassName.set(extension.defaultClassName)
+                defaultPackageName.set(extension.defaultPackageName)
+                defaultInputFiles.from(extension.inputFiles)
+                defaultLanguage.set(extension.language)
+                defaultExtractionPolicy.set(extension.defaultExtractionPolicy)
+                configMappings.set(extension.configMappings)
+                defaultExtractors.set(extension.extractors)
+                defaultOutputDirectory.set(target.layout.buildDirectory.dir("generated/sources/configgen"))
+                outputDirectory.set(target.layout.buildDirectory.dir("generated/sources/configgen"))
+                inputFiles.from(extension.configMappings.orNull?.flatMap { it.inputFiles } ?: emptyList<Path>())
 
+                outputs.upToDateWhen { false }
+            }
+        }
 
         val group = "org.delyo"
         val version = "1.0.0"
